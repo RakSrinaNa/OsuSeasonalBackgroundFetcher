@@ -10,4 +10,5 @@ module OsuSeasonalSkins {
 	requires org.jsoup;
 	requires args4j;
 	requires slf4j.api;
+	requires log4j.slf4j.impl;
 }

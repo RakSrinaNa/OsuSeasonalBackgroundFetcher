@@ -6,10 +6,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Logger name="fr.mrcraftcod.utils" level="info">
-            <AppenderRef ref="Console"/>
-        </Logger>
-        <Logger name="fr.mrcraftcod.osuseasonalskins" level="info">
+        <Logger name="fr.mrcraftcod" level="info">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="error">

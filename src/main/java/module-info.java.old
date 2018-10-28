@@ -9,6 +9,8 @@ module OsuSeasonalSkins {
 	requires org.apache.commons.io;
 	requires org.jsoup;
 	requires args4j;
-	requires slf4j.api;
+	requires org.slf4j;
 	requires log4j.slf4j.impl;
+	
+	exports fr.mrcraftcod.osuseasonalskins;
 }

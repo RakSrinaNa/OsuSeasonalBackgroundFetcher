@@ -53,7 +53,7 @@ public class Main{
 					}
 					else{
 						final var results = rootDocument.getElementsByClass("news-index-item__title").stream()
-								            .filter(elem -> elem.text().contains("Fanart Contest Results"))
+								            .filter(elem -> parameters.winners && elem.text().contains("Fanart Contest Results"))
 								            .filter(elem -> elem.hasAttr("href"))
 								            .map(elem -> elem.attr("href"))
 								            .collect(Collectors.toList());

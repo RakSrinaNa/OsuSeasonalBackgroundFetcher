@@ -57,7 +57,7 @@ public class Main{
 						final var results = rootDocument.getElementsByClass("news-index-item__title").stream()
 								            .filter(elem -> !parameters.onlyWinners || elem.text().contains("Fanart Contest Results"))
 								            .filter(elem -> elem.hasAttr("href"))
-								            .map(elem -> elem.attr("href"))
+								            .map(elem -> elem.absUrl("href"))
 								            .collect(Collectors.toList());
 						LOGGER.info("{} contests results found on page {}", results.size(), page);
 						articlePages.addAll(results);
@@ -84,7 +84,7 @@ public class Main{
 				if(requestResult.getStatus() == 200){
 					final var rootDocument = Jsoup.parse(requestResult.getBody());
 					final var result = rootDocument.getElementsByClass("osu-md__link").stream()
-					            .map(elem -> elem.attr("href"))
+					            .map(elem -> elem.absUrl("href"))
 					            .filter(link -> TO_DOWNLOAD.matcher(link).matches())
 					            .collect(Collectors.toList());
 					LOGGER.info("Found {} images", result.size());

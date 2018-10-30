@@ -17,6 +17,6 @@ public class Parameters{
 	@Option(name = "-o", aliases = "--out_folder", usage = "The folder where to download images")
 	public File outFolder = new File(".", "images");
 	
-	@Option(name = "-w", aliases = "--winners", usage = "Sets if only the winning contests are downloaded (default: true)")
-	public boolean winners = true;
+	@Option(name = "-w", aliases = "--winners", usage = "Sets if only the winning contests are downloaded")
+	public boolean onlyWinners = false;
 }

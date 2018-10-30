@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
  */
 public class Main{
 	private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+	private static final Pattern TO_DOWNLOAD = Pattern.compile(".*\\.(jpg|png|jpeg)");
 	
 	public static void main(String[] args){
 		final var parameters = new Parameters();
@@ -36,7 +38,7 @@ public class Main{
 		
 		parameters.getOutFolder().mkdirs();
 		
-		final var contestResultPages = new ArrayList<String>();
+		final var articlePages = new ArrayList<String>();
 		
 		var pageHasContent = true;
 		var page = 1;
@@ -53,16 +55,16 @@ public class Main{
 					}
 					else{
 						final var results = rootDocument.getElementsByClass("news-index-item__title").stream()
-								            .filter(elem -> parameters.winners && elem.text().contains("Fanart Contest Results"))
+								            .filter(elem -> !parameters.onlyWinners || elem.text().contains("Fanart Contest Results"))
 								            .filter(elem -> elem.hasAttr("href"))
 								            .map(elem -> elem.attr("href"))
 								            .collect(Collectors.toList());
 						LOGGER.info("{} contests results found on page {}", results.size(), page);
-						contestResultPages.addAll(results);
+						articlePages.addAll(results);
 					}
 				}
 				else{
-					LOGGER.warn("Response code for page {} was {}", page, requestResult.getStatus());
+					LOGGER.error("Response code for page {} was {}", page, requestResult.getStatus());
 				}
 			}
 			catch(final Exception e){
@@ -71,23 +73,25 @@ public class Main{
 			page++;
 		}
 		
+		LOGGER.info("{} articles found and going to inspect them", articlePages.size());
+		
 		final var imageLinks = new ArrayList<String>();
-		for(final var pageLink : contestResultPages){
-			LOGGER.info("Processing page content");
+		for(final var articleLink : articlePages){
+			LOGGER.info("Processing page content: {}", articleLink);
 			try{
-				final var pageURL =  new URL(pageLink);
+				final var pageURL =  new URL(articleLink);
 				final var requestResult = new StringGetRequestSender(pageURL).getRequestResult();
 				if(requestResult.getStatus() == 200){
 					final var rootDocument = Jsoup.parse(requestResult.getBody());
 					final var result = rootDocument.getElementsByClass("osu-md__link").stream()
 					            .map(elem -> elem.attr("href"))
-					            .filter(link -> link.endsWith(".png"))
+					            .filter(link -> TO_DOWNLOAD.matcher(link).matches())
 					            .collect(Collectors.toList());
 					LOGGER.info("Found {} images", result.size());
 					imageLinks.addAll(result);
 				}
 				else{
-					LOGGER.warn("Response code for page {} was {}", pageLink, requestResult.getStatus());
+					LOGGER.error("Response code for page {} was {}", articleLink, requestResult.getStatus());
 				}
 			}
 			catch(final Exception e){
@@ -95,8 +99,10 @@ public class Main{
 			}
 		}
 		
+		LOGGER.info("{} images found and will be downloaded", imageLinks.size());
+		
 		for(final var imageLink : imageLinks){
-			LOGGER.info("Processing image");
+			LOGGER.info("Processing image {}", imageLink);
 			try{
 				final var urlPaths = imageLink.split("/");
 				final var fileName = urlPaths[urlPaths.length - 1];
@@ -106,9 +112,15 @@ public class Main{
 					final var finalStream = requestResult.getBody();
 					try(finalStream){
 						final File file = new File(parameters.getOutFolder(), fileName);
-						LOGGER.info("Saving to {}", file.getAbsolutePath());
-						try(FileOutputStream fos = new FileOutputStream(file)){
-							IOUtils.copy(finalStream, fos);
+						LOGGER.info("Saving to {}, exists: {}", file.getAbsolutePath(), file.exists());
+						if(file.exists())
+						{
+							LOGGER.warn("File {} already exists, skipping", file);
+						}
+						else{
+							try(FileOutputStream fos = new FileOutputStream(file)){
+								IOUtils.copy(finalStream, fos);
+							}
 						}
 					}
 					catch(final IOException e){
@@ -116,7 +128,7 @@ public class Main{
 					}
 				}
 				else{
-					LOGGER.warn("Response code for page {} was {}", imageLink, requestResult.getStatus());
+					LOGGER.error("Response code for page {} was {}", imageLink, requestResult.getStatus());
 				}
 			}
 			catch(final Exception e){

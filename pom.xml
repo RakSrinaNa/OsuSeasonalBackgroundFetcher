@@ -6,13 +6,13 @@
 
     <groupId>fr.mrcraftcod</groupId>
     <artifactId>OsuSeasonalSkins</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <main.class>fr.mrcraftcod.osuseasonalskins.Main</main.class>
-        <log4j.version>2.11.1</log4j.version>
+        <log4j.version>2.11.2</log4j.version>
     </properties>
     <packaging>jar</packaging>
 
@@ -29,7 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -65,7 +65,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
@@ -73,13 +73,6 @@
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                        <version>6.2</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -99,7 +92,7 @@
         <dependency>
             <groupId>fr.mrcraftcod</groupId>
             <artifactId>utils.http</artifactId>
-            <version>5.1.2</version>
+            <version>5.2.1</version>
         </dependency>
         <dependency>
             <groupId>args4j</groupId>
@@ -109,7 +102,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>11</version>
+            <version>11.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
